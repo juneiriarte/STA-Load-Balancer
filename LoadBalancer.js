@@ -1,5 +1,5 @@
-export const label ='Round-robin'
-export default class RoudRobin {
+export const label ='Round-robin ponderado'
+export default class WeightedRoudRobin {
   // import vite.config;
   // Очень важное примечание к этому заданию: все полезные нагрузки запросов должны быть заменены числовым значением строки. В противном случае задание будет считаться невыполненным.
 
@@ -29,23 +29,21 @@ export default class RoudRobin {
     //   payload: "08319462", // Datos que envía el cliente
     //   work: 4              // Unidades de trabajo necesarias
     // }
-    const server = this.servers[this.next];
-    if (this.c<server.power){
-      this.next=this.next;
-      this.c++;
+    let servidor= this.servers [0];
+    for (const s of this.servers){
+      const conexiones_mio= (servidor.activeRequest ? 1:0 )+servidor.queuedRequests.length;
+      const conexiones_tuyo=(s.activeRequest ? 1: 0 )+s.queuedRequests.length;
+    
+    if (conexiones_tuyo < conexiones_mio){
+      servidor=s;
     }
-    else if (this.q<2 &&  server.power==2){
-      return sendToServer(server.id);
-      q++;
-    }
-    else if (this.q<1 &&  server.power==1){
-      return sendToServer(server.id);
-      q++;
-    }
-    this.next= (this.next +1 ) % this.servers.length;
+  }
+    let serverId=servidor.id;
+    
+    
     
 
     // Envía la petición al servidor y devuelve su respuesta al cliente.
-    return sendToServer(server.id);
+    return sendToServer(serverId);
   }
 }
